@@ -18,9 +18,9 @@ class Config:
     PROCESSED_DOCS_PATH: str = "./data/processed"
     
     LOG_LEVEL: str = "INFO"
-    CHUNK_SIZE: int = 1200  # Increased from 500 to preserve complete policy sections
-    CHUNK_OVERLAP: int = 300  # Increased from 100 to 300 for better context preservation
-    TOP_K_RESULTS: int = 8    # Increased from 4 to get more comprehensive context
+    CHUNK_SIZE: int = 800   # Optimized for speed while maintaining quality
+    CHUNK_OVERLAP: int = 150  # Reduced overlap for faster processing
+    TOP_K_RESULTS: int = 6    # Optimized for speed
     SIMILARITY_THRESHOLD: float = 0.5
     
     @classmethod

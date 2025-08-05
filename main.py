@@ -248,7 +248,51 @@ async def process_query(request: QueryRequest, token: str = Depends(verify_token
         logger.error(f"Error processing query: {e}")
         raise HTTPException(status_code=500, detail=f"Query processing failed: {str(e)}")
 
-@app.post("/hackrx/run", tags=["Hackathon"])
+@app.post("/hackrx/run", tags=["Hackathon"], response_model=Dict[str, List[str]])
+async def hackrx_run(request: BatchQueryRequest, token: str = Depends(verify_token)):
+    """
+    Hackathon submission endpoint - processes documents and questions according to required format.
+    
+    Expected Request Format:
+    {
+        "documents": "https://example.com/policy.pdf", 
+        "questions": ["Question 1", "Question 2", "..."]
+    }
+    
+    Expected Response Format:
+    {
+        "answers": ["Answer to question 1", "Answer to question 2", "..."]
+    }
+    """
+    try:
+        start_time = time.time()
+        logger.info(f"🚀 Processing hackathon request with {len(request.questions)} questions")
+        
+        # Use existing batch processing logic but format for hackathon requirements
+        answers = []
+        
+        # Use existing async processing for speed (preserving all existing logic)
+        tasks = [
+            retrieval_system.retrieve_and_generate_answer_async(q, embeddings_manager)
+            for q in request.questions
+        ]
+        
+        results = await asyncio.gather(*tasks)
+        
+        # Extract just the answer strings for hackathon format (no metadata)
+        answers = [res[0] for res in results]
+        
+        processing_time = time.time() - start_time
+        logger.info(f"Hackathon request completed in {processing_time:.2f} seconds")
+        
+        # Return in the exact format required by hackathon
+        return {"answers": answers}
+        
+    except Exception as e:
+        logger.error(f"Error in hackathon endpoint: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+
+@app.post("/batch-queries", tags=["Query Processing"])
 async def process_batch_queries(request: BatchQueryRequest, token: str = Depends(verify_token)) -> BatchQueryResponse:
     """
     **Optimized for speed.** Assumes a document has been pre-indexed using `/load-and-index`.

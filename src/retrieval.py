@@ -494,9 +494,9 @@ Answer:
                 client.chat.completions.create,
                 model=config.OPENAI_MODEL,
                 messages=[{"role": "user", "content": prompt}],
-                temperature=0.2,
-                max_tokens=180,
-                top_p=0.9
+                temperature=0.1,
+                max_tokens=120,
+                top_p=0.95
             )
 
             answer = response.choices[0].message.content.strip()
